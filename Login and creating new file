@@ -1,0 +1,109 @@
+//App-http://automationpractice.com/index.php 
+package shoppingapp;
+
+import java.sql.Driver;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.idealized.Javascript;
+
+import io.opentelemetry.exporter.logging.SystemOutLogExporter;
+//Creating class to perform opening and calling different pages (main page class)
+public class Homepage_signup_login {
+	
+	private static final String Null = null;
+	public static Object driver;
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\shailja.dubey\\Downloads\\chromedriver_win32\\chromedriver.exe");
+		 WebDriver driver=new ChromeDriver();
+driver.get("http://automationpractice.com/index.php");//website calling
+driver.manage().window().maximize();
+Thread.sleep(1000);
+
+String s=driver.getTitle();
+System.out.println("Title of page-"+s);
+signup(driver);//method to perform signup operation
+	}
+
+	private static void signup(WebDriver driver) throws InterruptedException {
+		// TODO Auto-generated method stub
+      driver.findElement(By.xpath("//a[@title='Log in to your customer account']")).click();
+      System.out.println("Title-"+driver.getTitle());
+      JavascriptExecutor js=(JavascriptExecutor) driver;
+      js.executeScript("window.scrollBy(0,100)");
+      Thread.sleep(3000);
+      System.out.println("select 1.for create new account 2.login");
+      Scanner s=new Scanner(System.in);
+      int a=s.nextInt();
+      if(a==1)
+      {
+    	 createacc(driver);
+      }
+      else
+      {
+    	  oldacc(driver);
+      }
+      }
+
+	private static void oldacc(WebDriver driver) {
+		// TODO Auto-generated method stub
+	}
+
+	private static void createacc(WebDriver driver) throws InterruptedException {
+		// TODO Auto-generated method stub
+		int checked=0;
+		System.out.println("enter email id");
+		Scanner s1=new Scanner(System.in);
+		String emailid=s1.next();
+		WebElement email=driver.findElement(By.id("email_create"));
+        email.sendKeys(emailid);
+        WebElement button=driver.findElement(By.xpath("//button[@id='SubmitCreate']"));
+        button.sendKeys(Keys.ENTER);
+        Thread.sleep(6000);
+        String nexttitle=driver.getTitle();
+        do
+        {
+        	 Thread.sleep(3000);
+        try
+        {
+        	Thread.sleep(3000);
+        System.out.println("error check message"+driver.findElement(By.xpath("//div[@class='form-group form-ok']")).getText());
+        }
+        catch(NoSuchElementException e)
+        {
+        	System.out.println("enter email valid id: ");
+        	String emailid2=s1.next();
+        	email.sendKeys(emailid2);
+        	button.sendKeys(Keys.ENTER);
+        	checked=1;
+        }
+        }while(checked==1);
+        //if(result.findElement(By.xpath("//div[@class='form-group form-error']")))
+       /* System.out.println("page opened-"+nexttitle);
+        String ss="Login - My Store";
+        if(nexttitle.endsWith(ss))
+        {
+        	System.out.println("enter email valid id: ");
+        	String emailid2=s1.next();
+        	email.sendKeys(emailid2);
+        }
+        else
+        {
+        System.out.println("Next title of page-"+driver.getTitle());
+        }*/
+   
+       
+        System.out.println(driver.getTitle());
+	}
+//isdisplay.
+	}
+
+
