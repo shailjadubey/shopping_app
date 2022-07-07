@@ -1,0 +1,420 @@
+//App-http://automationpractice.com/index.php 
+package shoppingapp;
+
+import java.io.File;
+//import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.Driver;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Scanner;
+import java.util.regex.MatchResult;
+
+import org.apache.commons.io.FileUtils;
+import org.openqa.selenium.Alert;
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WindowType;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.devtools.idealized.Javascript;
+import org.openqa.selenium.support.ui.Select;
+
+
+import io.opentelemetry.exporter.logging.SystemOutLogExporter;
+//Creating class to perform opening and calling different pages (main page class)
+public class Homepage_signup_login  {
+	
+	
+	private static final String Null = null;
+	static //public static Object driver;
+	WebDriver driver;
+	public static void main(String[] args) throws InterruptedException {
+		// TODO Auto-generated method stub
+		System.setProperty("webdriver.chrome.driver", "C:\\Users\\shailja.dubey\\Downloads\\chromedriver_win32\\chromedriver.exe");
+		driver=new ChromeDriver();
+		 System.out.println(" Chrome Open");
+		Thread.sleep(3000);
+driver.get("http://automationpractice.com/index.php");//website calling
+System.out.println(" Shopping site Open");
+//Reporter.log("shopping website open");
+driver.manage().window().maximize();
+System.out.println(" Window maximize");
+Thread.sleep(1000);
+String s=driver.getTitle();
+System.out.println("Title of page-"+s);//method to get title of current page
+signup(driver);//method to perform signup operation
+	}
+
+	private static void signup(WebDriver driver) throws InterruptedException {
+		// TODO Auto-generated method stub
+		System.out.println("Title of page after method called");
+		 Thread.sleep(3000);
+      driver.findElement(By.xpath("//a[@title='Log in to your customer account']")).click();
+      Thread.sleep(3000);
+      System.out.println("Title-"+driver.getTitle());
+      JavascriptExecutor js=(JavascriptExecutor) driver;
+      js.executeScript("window.scrollBy(0,100)");
+      System.out.println("Window scroll");
+      Thread.sleep(3000);
+      System.out.println("Taking user input for perform next operation");
+      System.out.println("select 1.for create new account 2.login");
+      Scanner s=new Scanner(System.in);
+      int a=s.nextInt();
+      if(a==1)
+      {
+    	 createacc(driver);
+      }
+      else
+      {
+    	  oldacc(driver);
+      }   
+      Homepage_signup_login sl=new Homepage_signup_login();//creating class object
+      sl.homepagemethod(driver);//calling method for performing all operation on home page from other class
+	}
+
+	private static void oldacc(WebDriver driver) {
+		// TODO Auto-generated method stub
+		Scanner s2=new Scanner(System.in);
+	int	check1=0;
+		do {
+		System.out.println("Enter email id ");
+		String Oldemailid=s2.next();
+		WebElement oemailid=driver.findElement(By.id("email"));
+		oemailid.clear();
+		oemailid.sendKeys(Oldemailid);
+		System.out.println("Enter password");
+		String passw=s2.next();
+		WebElement password1=driver.findElement(By.id("passwd"));
+		password1.clear();
+		password1.sendKeys(passw);
+		driver.findElement(By.id("SubmitLogin")).sendKeys(Keys.ENTER);
+		WebElement heading1=driver.findElement(By.xpath("//h1[@class='page-heading']"));
+		String heading13=heading1.getText();
+		System.out.println("Heading of page after login -"+heading13);
+		String heading12="AUTHENTICATION";
+		if(heading12.equals(heading13))
+		{
+			System.out.println("Enter valid id and password");
+			check1=0;
+		}
+		else
+		{
+			check1=1;
+		}
+		}while(check1==0);
+		System.out.println("Login done");
+	}
+
+
+	private static void createacc(WebDriver driver) throws InterruptedException{
+		// TODO Auto-generated method stub
+		int checked=0;
+		System.out.println("enter email id");
+		Scanner s1=new Scanner(System.in);
+		String emailid=s1.next();
+		System.out.println("Heading of page-"+driver.findElement(By.xpath("//h1[@class='page-heading']")).getText());
+		WebElement email=driver.findElement(By.id("email_create"));
+        email.sendKeys(emailid);
+        WebElement button=driver.findElement(By.xpath("//button[@id='SubmitCreate']"));
+        button.sendKeys(Keys.ENTER);
+//driver.switchTo().newWindow(WindowType.TAB);
+        Thread.sleep(6000);
+        
+        
+       
+        JavascriptExecutor js=(JavascriptExecutor) driver;
+        js.executeScript("window.scrollBy(0,250)");
+        do
+        {
+        	Thread.sleep(6000);
+        WebElement heading=driver.findElement(By.xpath("//h1[@class='page-heading']"));
+        System.out.println("Heading -"+heading.getText());
+        //Verify heading
+        String h1="CREATE AN ACCOUNT";
+        String h2="AUTHENTICATION";
+        if(heading.equals(h1))
+        {System.out.println("Heading verified //test case 2 pass");
+        checked=1;
+	}
+        else if(heading.equals(h2))
+        {
+        	System.out.println("Incorrect Heading // Test case fail -Report Bug");
+           
+            Thread.sleep(3000);
+            System.out.println("Taking screenshot in failed test case as valid email id");
+            File image1=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+           //taking screenshot if test case fail
+           
+				try {
+					FileUtils.copyFile(image1,new File("D:/selenium screenshot/image1.png"));
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			
+            System.out.println("Screenshot saved");
+            Thread.sleep(3000);
+            System.out.println("Please enter valid email id");
+    		String emailid2=s1.next();
+            email.sendKeys(emailid2);
+            button.sendKeys(Keys.ENTER);
+            checked=0;
+            emailid=emailid2;
+        }
+        else {
+        	System.out.println("Heading verified //test case 2 pass");
+            checked=1;
+        }
+        	
+        Thread.sleep(3000);
+      
+        }while(checked==0);
+        System.out.println("Enter title ,select 1.for Mr AND 2 for mrs-");
+        int a=s1.nextInt();
+        if(a==1)
+        {
+        	driver.findElement(By.id("id_gender1")).click();
+        	System.out.println("MR radio button selected");
+        }
+        else
+        {
+        	driver.findElement(By.id("id_gender2")).click();
+        	System.out.println("MRS radio button selected");
+        }
+        js.executeScript("window.scrollBy(0,500)");
+        System.out.println("Enter 1st name");
+        String firstname=s1.next();
+        driver.findElement(By.id("customer_firstname")).sendKeys(firstname);
+        System.out.println("Enter lastname name");
+        String lastname=s1.next();
+        driver.findElement(By.id("customer_lastname")).sendKeys(lastname);
+        js.executeScript("window.scrollBy(0,250)");
+        System.out.println("Verify email auto populate");
+       WebElement idcheck=driver.findElement(By.xpath("//input[@data-validate='isEmail']"));
+       String emailautovalue=idcheck.getAttribute("value");
+        System.out.println("Auto populate email id is-"+emailautovalue);
+        if(emailautovalue.equals(emailid))
+        {
+        	System.out.println("Id verify Test case 3 pass");
+        	
+        }
+        else
+        {
+        	System.out.println("Id incorrect Test case failed");
+        	createacc(driver);
+        }
+        System.out.println("Enter password ");//Enter password
+        String password=s1.next();
+        driver.findElement(By.id("passwd")).sendKeys(password);
+        System.out.println("Enter your date birth with / in between and in DD/MM/YYYY format");//enter DOB
+        String DOB=s1.next();
+        String Datediv[]=DOB.split("/");//Used split method to divide data, month and year by /
+        String date=Datediv[0];//1st division for date
+        String month=Datediv[1];//2nd for month
+        String year=Datediv[2];//3rd for year
+        driver.findElement(By.id("days")).sendKeys(date);//passing date 
+        Select sel= new Select(driver.findElement(By.id("months")));
+        try {
+        sel.selectByValue(month);}//passing month by selection method
+        catch(Exception e)
+        {//try catch for wrong format
+        	System.out.println("Exception error Please enter month in correct format without 0 and try again");
+        }
+        driver.findElement(By.id("years")).sendKeys(year);//passing year
+        System.out.println("DOB done");
+        
+        
+        System.out.println("Do you want to select -Sign up for our newsletter! checkbox");
+        System.out.println("Select 1 for yes and 2 for No");
+        int y=s1.nextInt();//if else condition dfor slectiong radio button
+        if(y==1)
+        {
+        	driver.findElement(By.id("newsletter")).click();
+        }
+        else
+        {
+        	System.out.println("Remains unselected");
+        }
+        System.out.println("Do you want to select -Receive special offers from our partners! enter 1 for yes and 2 for no");
+        int n=s1.nextInt();
+        if(n==1)
+        {
+        	driver.findElement(By.id("optin")).click();
+        }
+        else
+        {
+        	System.out.println("Remains unselected");
+        }
+        System.out.println("Enter country name");
+        String coun=s1.next();
+        driver.findElement(By.id("company")).sendKeys(coun);//input country name
+        System.out.println("Enter address ");
+        String address=s1.next();
+        driver.findElement(By.id("address1")).sendKeys(address);//input adddress
+        System.out.println("Enter address line 2 if you want");
+        String address2=s1.next();
+        driver.findElement(By.id("address2")).sendKeys(address2);
+        System.out.println("Enter City name");
+        String cityname=s1.next();
+        driver.findElement(By.id("city")).sendKeys(cityname);
+        System.out.println("Enter state");
+        String state1=s1.next();//state input
+        try {
+        Select select1=new Select(driver.findElement(By.id("id_state")));
+       select1.selectByVisibleText(state1);}
+        catch(Exception e)
+        {
+        	System.out.println("Enter valid state name");
+        	String state2=s1.next();
+        	Select select1=new Select(driver.findElement(By.id("id_state")));
+            select1.selectByVisibleText(state2);
+        }
+       System.out.println("Enter postalcode");
+       String code=s1.next();
+       driver.findElement(By.id("postcode")).sendKeys(code);
+       Select select2=new Select(driver.findElement(By.id("id_country")));
+       select2.getFirstSelectedOption();
+       System.out.println("Enter additional inforamtion");
+       String info=s1.next();
+       driver.findElement(By.id("other")).sendKeys(info);
+       System.out.println("Enter Home phone number");
+       String hpn=s1.next();
+       System.out.println("Home phone number si -"+hpn);
+       driver.findElement(By.xpath("//input[@id='phone']")).sendKeys(hpn);
+       System.out.println("Enter phone number");
+       String pn=s1.next();
+       driver.findElement(By.id("phone_mobile")).sendKeys(pn);
+       System.out.println("Enter address for future reference");
+       String faddress=s1.next();
+       driver.findElement(By.id("alias")).sendKeys(faddress);
+       System.out.println("Now register button clicking operation ");
+        WebElement registerbutton=driver.findElement(By.xpath("//button[@id='submitAccount']"));
+        registerbutton.sendKeys(Keys.ENTER);
+       System.out.println("Registration done");
+       Thread.sleep(6000);
+       System.out.println("Title of next page after registration is-"+driver.getTitle());
+	}
+
+
+
+	public static void homepagemethod(WebDriver driver) throws InterruptedException
+	{
+		//Method to open home page 
+		Thread.sleep(3000);
+		Scanner s3=new Scanner(System.in);
+		WebElement homebutton = null;
+		try {
+	 homebutton=driver.findElement(By.xpath("//a[@title='Home']"));//home button on My account page
+		}
+		catch(NoSuchElementException e)
+		{
+			System.out.println("Page heading-"+driver.getTitle());
+			driver.navigate().refresh();
+		}
+		finally
+		{
+			System.out.println("After refresh page loads");
+			System.out.println("Title of page now is"+driver.getTitle());
+		}
+	//method to check element present or not
+	boolean eleSelected=homebutton.isDisplayed();
+	System.out.println("Element display-"+eleSelected);
+	homebutton.sendKeys(Keys.ENTER);
+	System.out.println("Home page button click");
+	Thread.sleep(3000);
+	System.out.println("Title of page-"+driver.getTitle());//Home page open 
+	System.out.println("Do you want to do search option");
+	int srch=s3.nextInt();
+	if(srch==1)
+	{
+		System.out.println("Enter search ");
+		String search=s3.next();
+		driver.findElement(By.id("search_query_top")).sendKeys(search);
+		driver.findElement(By.xpath("//button[@name='submit_search']")).click();
+		System.out.println("All details display on screen");
+		List<WebElement> searchresult=driver.findElements(By.xpath("//h5[@itemprop='name']"));//path for searched items
+		System.out.println("Searched Results are-");
+		ArrayList<String> searched=new ArrayList<String>();
+		for(int productid=0;productid<searchresult.size();productid++)
+		{
+			//Display all searched items in a arraylist as be can access same list every time
+			searched.add(searchresult.get(productid).getText());
+		}
+		//Display searched count
+		System.out.println("Total serached result is"+searched.size());
+		//For loop to display all searched list 
+		for(String name:searched)
+		{
+		System.out.println(name);}
+		//Display message for searched list id done
+		System.out.println("Result done Test case  for seraching Pass");
+		
+		driver.manage().window().minimize();
+		Thread.sleep(3000);
+		System.out.println("Enter name of product from the searched list which you want to add to cart");
+		String userproduct=s3.next();//Taking user input for product 
+		System.out.println("You have enter the product-"+userproduct);//message to confirm product name
+	  int productid;
+		boolean confirmproduct=searched.contains(userproduct);
+	    if(confirmproduct)
+	    {
+	    	System.out.println("Product find in searched list confirm test case Pass");
+	    	productid=searched.indexOf(userproduct);
+	    }
+	    else
+	    {
+	    	System.out.println("Test case Fail for product name incorrect name");
+	    	System.out.println("Enter correct name or enter name from the list");
+	    }
+
+			driver.findElement(By.xpath("//a[@title='Add to cart'] and conatins(@data-id-product,'productid')"));
+			//Test case for product added to cart pass message
+			System.out.println("Test case for product to add in cart is pass");
+			Thread.sleep(3000);
+			driver.findElement(By.xpath("//span[@title='Close window']")).click();
+			//Maximize the window
+			driver.manage().window().maximize();
+			System.out.println("Do you want to Purchase product ");
+			int purchasecount=s3.nextInt();
+			int i = 0;
+			if(i==1)
+			{
+			cartmethod();	
+			}
+			else
+			{
+				homepagemethod(driver);
+			}
+	}
+
+	}
+
+
+private static void cartmethod() {
+		// TODO Auto-generated method stub
+	//Click on cart option
+		driver.findElement(By.xpath("//a[@title='View my shopping cart']")).click();
+		JavascriptExecutor js=(JavascriptExecutor) driver;
+	      js.executeScript("window.scrollBy(0,700)");
+	     driver.findElement(By.xpath("//a[@class='button btn btn-default standard-checkout button-medium']")).click();
+	     System.out.println("Title of page after process-"+driver.getTitle());
+	     //driver.findElement(By.xpath(""))
+	}
+
+public void close(WebDriver driver)
+{
+	driver.close();
+}
+
+}
+
+	
+
